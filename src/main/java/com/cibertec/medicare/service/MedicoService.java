@@ -6,4 +6,5 @@ import java.util.List;
 public interface MedicoService {
     List<Medico> listarPorEspecialidad(Integer idEspecialidad);
     Medico obtenerPorId(Integer id);
+    List<Medico> listarTodos();
 }

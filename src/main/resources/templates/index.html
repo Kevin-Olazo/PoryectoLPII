@@ -2,33 +2,61 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediCare - Tu Salud Primero</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         .hero-section {
-            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1353&q=80');
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://images.unsplash.com/photo-1538108149393-fbbd81895907?auto=format&fit=crop&q=80&w=2000');
             background-size: cover;
             background-position: center;
             color: white;
-            padding: 100px 0;
+            padding: 150px 0;
+        }
+        .feature-box {
+            padding: 2rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            height: 100%;
+        }
+        .feature-box:hover {
+            transform: translateY(-5px);
         }
     </style>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#">🏥 MediCare</a>
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-hospital"></i> MediCare
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
-                <li class="nav-item"><a class="nav-link active" href="#">Inicio</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Especialidades</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Staff Médico</a></li>
-                <li class="nav-item ms-2">
-                    <a class="btn btn-light text-primary fw-bold" th:href="@{/login}">Iniciar Sesión</a>
+                <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/especialidades">Especialidades</a></li>
+
+                <li class="nav-item ms-lg-3" th:if="${session.usuarioLogin == null}">
+                    <a class="btn btn-light text-primary fw-bold" th:href="@{/login}">
+                        <i class="bi bi-person-circle"></i> Iniciar Sesión
+                    </a>
+                </li>
+
+                <li class="nav-item ms-lg-3 dropdown" th:if="${session.usuarioLogin != null}">
+                    <a class="btn btn-outline-light fw-bold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-check-fill"></i> <span th:text="${session.usuarioLogin.email}">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" th:href="@{/paciente/mis-citas}">Mis Citas</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Cerrar Sesión</a></li>
+                    </ul>
                 </li>
             </ul>
         </div>
@@ -37,40 +65,69 @@
 
 <header class="hero-section text-center">
     <div class="container">
-        <h1 class="display-4 fw-bold">Cuidamos lo que más importa</h1>
-        <p class="lead mb-4">Reserva tu cita médica en línea de forma rápida y segura.</p>
-        <a href="#" class="btn btn-primary btn-lg px-5">Reservar Cita Ahora</a>
+        <span class="badge bg-warning text-dark mb-3 px-3 py-2 rounded-pill">¡Nueva Sede en Lima!</span>
+        <h1 class="display-3 fw-bold mb-3">Tu salud en las mejores manos</h1>
+        <p class="lead mb-4 fs-4 opacity-75">Tecnología avanzada y calidez humana al servicio de tu bienestar.</p>
+        <a th:href="@{/reservar/tipo}" class="btn btn-primary btn-lg px-5 shadow-lg rounded-pill fw-bold">
+            Reservar Cita Ahora <i class="bi bi-arrow-right ms-2"></i>
+        </a>
     </div>
 </header>
 
-<div class="container my-5">
-    <div class="row text-center">
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="h5">🩺 Medicina General</h3>
-                    <p class="text-muted">Atención primaria integral para toda la familia.</p>
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold display-6">¿Por qué elegir MediCare?</h2>
+            <p class="text-muted">Nos diferenciamos por brindar una experiencia ágil y humana.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-box text-center">
+                    <div class="text-primary mb-3"><i class="bi bi-award fs-1"></i></div>
+                    <h4 class="fw-bold">Staff Certificado</h4>
+                    <p class="text-muted small">Todos nuestros especialistas cuentan con certificación CMP y RNE vigente, con años de experiencia clínica.</p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="h5">👶 Pediatría</h3>
-                    <p class="text-muted">Especialistas en el cuidado y desarrollo de tus hijos.</p>
+            <div class="col-md-4">
+                <div class="feature-box text-center">
+                    <div class="text-primary mb-3"><i class="bi bi-clock-history fs-1"></i></div>
+                    <h4 class="fw-bold">Atención 24/7</h4>
+                    <p class="text-muted small">Nuestro servicio de triaje y emergencias está disponible las 24 horas del día, los 365 días del año.</p>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-body">
-                    <h3 class="h5">❤️ Cardiología</h3>
-                    <p class="text-muted">Tecnología avanzada para el cuidado de tu corazón.</p>
+            <div class="col-md-4">
+                <div class="feature-box text-center">
+                    <div class="text-primary mb-3"><i class="bi bi-laptop fs-1"></i></div>
+                    <h4 class="fw-bold">Resultados Digitales</h4>
+                    <p class="text-muted small">Accede a tus recetas, historial y resultados de laboratorio directamente desde nuestra plataforma web.</p>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
+
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Lo que dicen nuestros pacientes</h2>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card bg-light border-0 p-4 text-center shadow-sm">
+                    <div class="card-body">
+                        <i class="bi bi-quote fs-1 text-secondary opacity-25"></i>
+                        <p class="fs-5 fst-italic text-dark">"Excelente atención. Pude reservar mi cita de cardiología en menos de 2 minutos y el Dr. House fue muy acertado en su diagnóstico. Recomendado al 100%."</p>
+                        <footer class="blockquote-footer mt-3">María González, <cite title="Paciente">Paciente Verificada</cite></footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="bg-dark text-white pt-5 pb-4 mt-auto">
+    <div class="container text-center"><p class="small">© 2026 MediCare</p></div>
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

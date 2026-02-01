@@ -27,4 +27,9 @@ public class MedicoServiceImpl implements MedicoService {
     public Medico obtenerPorId(Integer id) {
         return medicoRepository.findById(id).orElse(null);
     }
+
+    @Override
+    public List<Medico> listarTodos() {
+        return medicoRepository.findAll();
+    }
 }

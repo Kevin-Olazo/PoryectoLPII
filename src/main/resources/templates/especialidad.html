@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${especialidad.nombre} + ' - MediCare'">Detalle</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <style>
+        .specialty-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            color: white;
+            padding: 60px 0;
+            margin-bottom: 40px;
+        }
+        .doctor-card {
+            transition: all 0.3s;
+            border: 1px solid #dee2e6;
+        }
+        .doctor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+            border-color: #0d6efd;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">
+            <i class="bi bi-hospital"></i> MediCare
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/especialidades">Especialidades</a></li>
+
+                <li class="nav-item ms-lg-3" th:if="${session.usuarioLogin == null}">
+                    <a class="btn btn-light text-primary fw-bold" th:href="@{/login}">
+                        <i class="bi bi-person-circle"></i> Iniciar Sesión
+                    </a>
+                </li>
+
+                <li class="nav-item ms-lg-3 dropdown" th:if="${session.usuarioLogin != null}">
+                    <a class="btn btn-outline-light fw-bold dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-person-check-fill"></i> <span th:text="${session.usuarioLogin.email}">Usuario</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" th:href="@{/paciente/mis-citas}">Mis Citas</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="/logout">Cerrar Sesión</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header class="specialty-header text-center shadow">
+    <div class="container">
+        <h1 class="display-4 fw-bold" th:text="${especialidad.nombre}">Especialidad</h1>
+        <p class="lead opacity-75" th:text="${especialidad.descripcion}">Descripción...</p>
+    </div>
+</header>
+
+<div class="container mb-5">
+    <h3 class="mb-4 text-primary fw-bold border-bottom pb-2">👨‍⚕️ Staff Médico Disponible</h3>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-4" th:each="med : ${medicos}">
+            <div class="card doctor-card h-100 shadow-sm">
+                <div class="card-body text-center p-4">
+                    <div class="mb-3">
+                        <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                            <i class="bi bi-person-fill text-primary display-4"></i>
+                        </div>
+                    </div>
+                    <h4 class="card-title fw-bold text-dark" th:text="'Dr. ' + ${med.apellidos}">Apellido</h4>
+                    <p class="text-muted mb-1" th:text="${med.nombres}">Nombre</p>
+                    <span class="badge bg-info text-dark mb-3">CMP: <span th:text="${med.cmp}"></span></span>
+
+                    <hr>
+
+                    <a th:href="@{/reserva/detalle(idMedico=${med.idMedico})}" class="btn btn-primary w-100 fw-bold">
+                        <i class="bi bi-calendar-check me-2"></i> Reservar Cita
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${medicos.isEmpty()}" class="col-12">
+            <div class="alert alert-warning text-center">
+                No hay especialistas disponibles en esta área por el momento.
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white pt-5 pb-4 mt-auto">
+    <div class="container text-center text-md-start">
+        <div class="row text-center text-md-start">
+
+            <div class="col-md-3 col-lg-3 col-xl-3 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 fw-bold text-primary">🏥 MediCare</h5>
+                <p>Tu sistema de gestión de citas médicas confiable. Conectamos pacientes con los mejores especialistas.</p>
+            </div>
+
+            <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 fw-bold">Enlaces</h5>
+                <p><a href="/" class="text-white text-decoration-none">Inicio</a></p>
+                <p><a href="/especialidades" class="text-white text-decoration-none">Especialidades</a></p>
+                <p><a href="/login" class="text-white text-decoration-none">Login</a></p>
+            </div>
+
+            <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mt-3">
+                <h5 class="text-uppercase mb-4 fw-bold">Contacto</h5>
+                <p><i class="bi bi-house-door me-2"></i> Av. La Marina 123, Lima</p>
+                <p><i class="bi bi-envelope me-2"></i> contacto@medicare.com</p>
+                <p><i class="bi bi-telephone me-2"></i> +51 999 999 999</p>
+            </div>
+        </div>
+
+        <hr class="mb-4">
+
+        <div class="row align-items-center">
+            <div class="col-md-7 col-lg-8">
+                <p>© 2026 <strong>MediCare</strong>. Todos los derechos reservados.</p>
+            </div>
+            <div class="col-md-5 col-lg-4">
+                <div class="text-center text-md-end">
+                    <p class="small mb-0">Síguenos en redes sociales</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

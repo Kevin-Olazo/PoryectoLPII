@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Completar Reserva - MediCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-primary shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🏥 MediCare</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 overflow-hidden">
+                <div class="card-header bg-white p-4 border-bottom-0">
+                    <h2 class="fw-bold text-primary mb-0">📅 Finalizar Reserva</h2>
+                    <p class="text-muted">Estás a un paso de agendar tu cita.</p>
+                </div>
+
+                <div class="card-body p-4 pt-0">
+                    <div class="alert alert-primary d-flex align-items-center mb-4" role="alert">
+                        <i class="bi bi-info-circle-fill fs-4 me-3"></i>
+                        <div>
+                            Estás reservando con:
+                            <strong th:text="'Dr(a). ' + ${medico.nombres} + ' ' + ${medico.apellidos}">Nombre Médico</strong>
+                            <br>
+                            <small th:text="${medico.especialidad.nombre}">Especialidad</small>
+                        </div>
+                    </div>
+
+                    <form action="/reserva/guardar" method="post">
+                        <input type="hidden" id="idMedico" name="idMedico" th:value="${medico.idMedico}">
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">1. Selecciona la Fecha</label>
+                            <input type="date" name="fecha" class="form-control form-control-lg" required id="txtFecha" onchange="cargarHorarios()">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">2. Selecciona la Hora</label>
+                            <select name="hora" class="form-select form-select-lg" required id="cboHora" disabled>
+                                <option value="">-- Primero selecciona una fecha --</option>
+                            </select>
+                            <div class="form-text" id="msgHorario">Los horarios se cargarán según disponibilidad.</div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div th:if="${session.usuarioLogin == null}" class="text-center bg-light p-4 rounded">
+                            <h5 class="text-danger fw-bold"><i class="bi bi-lock-fill"></i> Inicia sesión para confirmar</h5>
+                            <div class="d-grid gap-2 col-md-8 mx-auto mt-3">
+                                <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+                            </div>
+                        </div>
+
+                        <div th:if="${session.usuarioLogin != null}" class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg py-3 fw-bold shadow">
+                                <i class="bi bi-check-circle-fill me-2"></i> CONFIRMAR RESERVA
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cargarHorarios() {
+        const fecha = document.getElementById("txtFecha").value;
+        const idMedico = document.getElementById("idMedico").value;
+        const combo = document.getElementById("cboHora");
+        const msg = document.getElementById("msgHorario");
+
+        // Si no hay fecha, reseteamos
+        if (!fecha) {
+            combo.innerHTML = '<option value="">-- Primero selecciona una fecha --</option>';
+            combo.disabled = true;
+            return;
+        }
+
+        // Mostramos cargando
+        combo.innerHTML = '<option value="">Cargando horarios...</option>';
+        combo.disabled = true;
+
+        // Llamada a nuestra API Java (AJAX)
+        fetch(`/api/horarios?idMedico=${idMedico}&fecha=${fecha}`)
+            .then(response => response.json())
+            .then(data => {
+                combo.innerHTML = '<option value="">-- Elige horario --</option>';
+
+                if (data.length === 0) {
+                    // Si no hay horas disponibles
+                    const option = document.createElement("option");
+                    option.text = "No hay horarios libres este día";
+                    combo.add(option);
+                    msg.className = "form-text text-danger";
+                    msg.innerText = "Lo sentimos, el doctor está lleno este día.";
+                } else {
+                    // Llenamos el combo con las horas libres
+                    data.forEach(hora => {
+                        const option = document.createElement("option");
+                        option.value = hora;
+                        option.text = hora; // Ej: 09:00
+                        combo.add(option);
+                    });
+                    combo.disabled = false;
+                    msg.className = "form-text text-success";
+                    msg.innerText = "Horarios actualizados correctamente.";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                combo.innerHTML = '<option value="">Error al cargar</option>';
+            });
+    }
+</script>
+
+</body>
+</html>

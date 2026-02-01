@@ -11,10 +11,12 @@ import java.util.List;
 @Repository
 public interface CitaRepository extends JpaRepository<Cita, Integer> {
 
-    List<Cita> findByMedicoAndFechaReserva(Medico medico, LocalDate fechaReserva);
+    // Buscar citas de un médico en una fecha específica
+    List<Cita> findByMedicoAndFechaReservaAndEstadoNot(Medico medico, LocalDate fechaReserva, String estado);
 
+    // Historial médico del doctor
     List<Cita> findByMedico(Medico medico);
 
+    // Historial del paciente (Usando el ID del paciente)
     List<Cita> findByPacienteIdPaciente(Integer idPaciente);
-
 }

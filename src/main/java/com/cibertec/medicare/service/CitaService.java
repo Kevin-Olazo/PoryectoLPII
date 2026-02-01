@@ -9,15 +9,13 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface CitaService {
-    // Método principal: Intentar reservar una cita
     Cita reservarCita(Cita cita);
-
-    // Validar si un horario está libre
     boolean estaHorarioDisponible(Medico medico, LocalDate fecha, LocalTime hora);
-
-    // Listar citas de un paciente
     List<Cita> listarCitasPorPaciente(Paciente paciente);
-
-    // Listar citas de un médico (agenda)
     List<Cita> listarCitasPorMedico(Medico medico);
+
+    // Método nuevo para la lógica dinámica
+    List<String> obtenerHorariosDisponibles(Integer idMedico, LocalDate fecha);
+
+    void cancelarCita(Integer idCita);
 }
